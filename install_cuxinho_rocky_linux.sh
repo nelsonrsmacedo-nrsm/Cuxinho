@@ -86,7 +86,7 @@ After=network.target
 User=cuxinho_user
 Group=cuxinho_user
 WorkingDirectory=$APP_DIR
-ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 src.main:app
+ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:50000 "src.main:app"
 Restart=always
 
 [Install]
@@ -101,7 +101,7 @@ log_info "Verificando status do serviço Cuxinho..."
 sudo systemctl status cuxinho
 
 log_info "Instalação do Cuxinho concluída com sucesso!"
-log_info "A aplicação deve estar acessível em http://<IP_DO_SEU_SERVIDOR>:5000"
+log_info "A aplicação deve estar acessível em http://<IP_DO_SEU_SERVIDOR>:50000"
 log_info "Você pode verificar os logs com: journalctl -u cuxinho.service -f"
 
 # Desativar ambiente virtual (se estiver ativo)
