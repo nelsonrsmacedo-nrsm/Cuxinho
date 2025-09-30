@@ -63,7 +63,12 @@ sudo -u cuxinho_user $PYTHON_VERSION "$APP_DIR/src/main.py" &
 PID=$!
 sleep 10 # Dar tempo para o Flask iniciar e criar o banco/usuário
 kill $PID # Matar o processo após a inicialização
+wait $PID 2>/dev/null # Esperar o processo terminar, ignorando erros se já estiver morto
 unset FLASK_DEBUG
+
+# Garantir que a porta 5000 esteja livre
+log_info "Verificando e liberando a porta 5000, se estiver em uso..."
+sudo fuser -k 5000/tcp || true # Mata qualquer processo usando a porta 5000
 
 # --- 10. Configurar serviço Systemd ---
 log_info "Configurando serviço Systemd para o Cuxinho..."
