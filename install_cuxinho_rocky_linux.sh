@@ -59,16 +59,19 @@ log_info "Inicializando o banco de dados (se necessário)..."
 # Para garantir que o usuário admin padrão seja criado, podemos rodar o main.py uma vez.
 # Desativar o modo de depuração para a execução inicial.
 export FLASK_DEBUG=0
+log_info "Iniciando temporariamente a aplicação para inicializar o banco de dados..."
 sudo -u cuxinho_user $PYTHON_VERSION "$APP_DIR/src/main.py" & 
 PID=$!
-sleep 10 # Dar tempo para o Flask iniciar e criar o banco/usuário
-kill $PID # Matar o processo após a inicialização
-wait $PID 2>/dev/null # Esperar o processo terminar, ignorando erros se já estiver morto
+sleep 15 # Dar tempo para o Flask iniciar e criar o banco/usuário
+log_info "Encerrando o processo de inicialização do banco de dados (PID: $PID)..."
+kill -TERM $PID # Envia sinal de término para o processo
+wait $PID 2>/dev/null # Espera o processo terminar, ignorando erros se já estiver morto
 unset FLASK_DEBUG
 
-# Garantir que a porta 5000 esteja livre
+# Garantir que a porta 5000 esteja livre de qualquer processo remanescente
 log_info "Verificando e liberando a porta 5000, se estiver em uso..."
 sudo fuser -k 5000/tcp || true # Mata qualquer processo usando a porta 5000
+sleep 2 # Pequena pausa para garantir que a porta seja liberada
 
 # --- 10. Configurar serviço Systemd ---
 log_info "Configurando serviço Systemd para o Cuxinho..."
