@@ -69,8 +69,8 @@ wait $PID 2>/dev/null # Espera o processo terminar, ignorando erros se já estiv
 unset FLASK_DEBUG
 
 # Garantir que a porta 5000 esteja livre de qualquer processo remanescente
-log_info "Verificando e liberando a porta 5000, se estiver em uso..."
-sudo fuser -k 5000/tcp || true # Mata qualquer processo usando a porta 5000
+log_info "Verificando e liberando a porta 50000, se estiver em uso..."
+sudo fuser -k 50000/tcp || true # Mata qualquer processo usando a porta 50000
 sleep 2 # Pequena pausa para garantir que a porta seja liberada
 
 # --- 10. Configurar serviço Systemd ---
