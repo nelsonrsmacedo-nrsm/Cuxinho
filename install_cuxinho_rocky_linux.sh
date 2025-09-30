@@ -86,7 +86,7 @@ After=network.target
 User=cuxinho_user
 Group=cuxinho_user
 WorkingDirectory=$APP_DIR
-ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:50000 "src.main:app"
+ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:50000 src.main:app
 Restart=always
 
 [Install]
