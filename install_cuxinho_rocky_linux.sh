@@ -46,6 +46,11 @@ log_info "Criando diretório do banco de dados e ajustando permissões..."
 sudo mkdir -p "$APP_DIR/src/database" || log_error "Falha ao criar diretório do banco de dados."
 sudo chown cuxinho_user:cuxinho_user "$APP_DIR/src/database" || log_error "Falha ao ajustar permissões do diretório do banco de dados."
 
+# Criar o diretório de logs para o Gunicorn e ajustar permissões
+log_info "Criando diretório de logs para o Gunicorn e ajustando permissões..."
+sudo mkdir -p /var/log/cuxinho || log_error "Falha ao criar diretório de logs do Gunicorn."
+sudo chown cuxinho_user:cuxinho_user /var/log/cuxinho || log_error "Falha ao ajustar permissões do diretório de logs do Gunicorn."
+
 # --- 6. Configurar ambiente virtual ---
 log_info "Configurando ambiente virtual Python..."
 sudo $PYTHON_VERSION -m venv "$APP_DIR/venv" || log_error "Falha ao criar ambiente virtual."
@@ -91,7 +96,7 @@ After=network.target
 User=cuxinho_user
 Group=cuxinho_user
 WorkingDirectory=$APP_DIR
-ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:50000 src.main:app
+ExecStart=$APP_DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:50000 src.main:app --error-logfile /var/log/cuxinho/gunicorn-error.log --access-logfile /var/log/cuxinho/gunicorn-access.log
 Restart=always
 
 [Install]
