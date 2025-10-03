@@ -70,7 +70,7 @@ log_info "Inicializando o banco de dados (se necessário)..."
 # Desativar o modo de depuração para a execução inicial.
 export FLASK_DEBUG=0
 log_info "Iniciando temporariamente a aplicação para inicializar o banco de dados..."
-sudo -u cuxinho_user $PYTHON_VERSION "$APP_DIR/src/main.py" & 
+sudo -u cuxinho_user "$APP_DIR/venv/bin/$PYTHON_VERSION" "$APP_DIR/src/main.py" & 
 PID=$!
 sleep 15 # Dar tempo para o Flask iniciar e criar o banco/usuário
 log_info "Encerrando o processo de inicialização do banco de dados (PID: $PID)..."
