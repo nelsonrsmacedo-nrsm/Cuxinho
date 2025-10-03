@@ -41,6 +41,11 @@ sudo git clone https://github.com/nelsonrsmacedo-nrsm/Cuxinho.git "$APP_DIR" || 
 log_info "Ajustando permissões do diretório da aplicação para cuxinho_user..."
 sudo chown -R cuxinho_user:cuxinho_user "$APP_DIR" || log_error "Falha ao ajustar permissões do diretório da aplicação."
 
+# Criar o diretório do banco de dados e ajustar permissões
+log_info "Criando diretório do banco de dados e ajustando permissões..."
+sudo mkdir -p "$APP_DIR/src/database" || log_error "Falha ao criar diretório do banco de dados."
+sudo chown cuxinho_user:cuxinho_user "$APP_DIR/src/database" || log_error "Falha ao ajustar permissões do diretório do banco de dados."
+
 # --- 6. Configurar ambiente virtual ---
 log_info "Configurando ambiente virtual Python..."
 sudo $PYTHON_VERSION -m venv "$APP_DIR/venv" || log_error "Falha ao criar ambiente virtual."
