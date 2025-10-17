@@ -22,7 +22,7 @@ sudo dnf update -y || log_error "Falha ao atualizar o sistema."
 
 # --- 2. Instalar dependências essenciais ---
 log_info "Instalando dependências essenciais (Python, pip, git)..."
-sudo dnf install -y $PYTHON_VERSION $PYTHON_VERSION-pip git || log_error "Falha ao instalar dependências."
+sudo dnf install -y $PYTHON_VERSION $PYTHON_VERSION-venv $PYTHON_VERSION-pip git psmisc || log_error "Falha ao instalar dependências."
 
 # --- 3. Criar usuário e grupo para o serviço ---
 log_info "Criando usuário e grupo para o serviço cuxinho_user..."
