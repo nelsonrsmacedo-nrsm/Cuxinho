@@ -18,11 +18,11 @@ log_error() {
 
 # --- 1. Atualizar o sistema ---
 log_info "Atualizando pacotes do sistema..."
-sudo dnf update -y || log_error "Falha ao atualizar o sistema."
+sudo apt update -y && sudo apt upgrade -y || log_error "Falha ao atualizar o sistema."
 
 # --- 2. Instalar dependências essenciais ---
 log_info "Instalando dependências essenciais (Python, pip, git)..."
-sudo dnf install -y $PYTHON_VERSION $PYTHON_VERSION-pip git || log_error "Falha ao instalar dependências."
+sudo apt install -y $PYTHON_VERSION $PYTHON_VERSION-venv $PYTHON_VERSION-pip git || log_error "Falha ao instalar dependências."
 
 # --- 3. Criar usuário e grupo para o serviço ---
 log_info "Criando usuário e grupo para o serviço cuxinho_user..."
@@ -70,7 +70,7 @@ log_info "Inicializando o banco de dados (se necessário)..."
 # Desativar o modo de depuração para a execução inicial.
 export FLASK_DEBUG=0
 log_info "Iniciando temporariamente a aplicação para inicializar o banco de dados..."
-sudo -u cuxinho_user "$APP_DIR/venv/bin/$PYTHON_VERSION" "$APP_DIR/src/main.py" & 
+sudo -u cuxinho_user bash -c "source \"$APP_DIR/venv/bin/activate\" && \"$APP_DIR/venv/bin/$PYTHON_VERSION\" \"$APP_DIR/src/main.py\"" & 
 PID=$!
 sleep 15 # Dar tempo para o Flask iniciar e criar o banco/usuário
 log_info "Encerrando o processo de inicialização do banco de dados (PID: $PID)..."
