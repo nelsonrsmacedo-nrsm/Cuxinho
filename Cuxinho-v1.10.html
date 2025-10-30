@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuxinho - Controle de Vacinação para Pets</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #6c757d;
+            --success-color: #7ed321;
+            --danger-color: #e74c3c;
+            --warning-color: #ffc107;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--dark-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a7bc8;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .authenticated-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .sidebar {
+            background: white;
+            width: 250px;
+            height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .search-container {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .search-input {
+            padding-left: 45px;
+            width: 100%;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 0 20px 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .status-active {
+            background: var(--success-color);
+        }
+
+        .status-inactive {
+            background: var(--secondary-color);
+        }
+
+        .status-pending {
+            background: var(--warning-color);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
+        }
+
+        .notification {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+        }
+
+        .permission-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .permissions-section {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            background: #f8f9fa;
+        }
+
+        .microchip-info {
+            background: #e8f5e8;
+            border: 1px solid #7ed321;
+            border-radius: var(--border-radius);
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #2d5016;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .age-badge {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: var(--border-radius);
+            padding: 4px 8px;
+            font-size: 11px;
+            color: #0d47a1;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .sex-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .sex-male {
+            background: #2196f3;
+        }
+
+        .sex-female {
+            background: #e91e63;
+        }
+
+        .sex-unknown {
+            background: #9e9e9e;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .whatsapp-badge {
+            background: #25D366;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .permissions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Layout de Login -->
+    <div id="login-layout" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div style="font-size: 48px; margin-bottom: 10px;">🐾</div>
+                <h1 style="color: var(--primary-color); margin-bottom: 5px;">Cuxinho</h1>
+                <p style="color: #666; margin-bottom: 30px;">Controle de Vacinação para Pets</p>
+            </div>
+            
+            <div id="login-page" class="page active">
+                <h2 class="login-title">Login</h2>
+                <div id="login-alert"></div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">E-mail</label>
+                        <input type="email" id="login-email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Senha</label>
+                        <input type="password" id="login-password" required placeholder="Sua senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        <span>🔐</span>
+                        Entrar
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 20px; color: #666;">
+                    Não tem uma conta? 
+                    <a href="#" onclick="showAuthPage('register')" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                        Cadastre-se aqui
+                    </a>
+                </p>
+            </div>
+
+            <div id="register-page" class="page">
+                <h2 class="login-title">Cadastro</h2>
+                <div id="register-alert"></div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">Nome Completo</label>
+                        <input type="text" id="register-name" required placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">E-mail</label>
+                        <input type="email" id="register-email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Senha</label>
+                        <input type="password" id="register-password" required placeholder="Crie uma senha">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirmar Senha</label>
+                        <input type="password" id="register-confirm-password" required placeholder="Confirme sua senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        <span>📝</span>
+                        Cadastrar
+                    </button>
+                </form>
+                <p style="text-align: center; margin-top: 20px; color: #666;">
+                    Já tem uma conta? 
+                    <a href="#" onclick="showAuthPage('login')" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                        Faça login aqui
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Autenticado -->
+    <div id="authenticated-layout" class="authenticated-layout">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                🐾 Cuxinho
+            </div>
+            <div class="user-menu">
+                <span id="header-user-name"></span>
+                <div class="user-avatar" id="user-avatar"></div>
+                <button class="btn btn-outline" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="nav-menu" id="nav-menu">
+                <!-- Menu será carregado dinamicamente baseado nas permissões -->
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <h1 style="margin-bottom: 20px;">Dashboard</h1>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-tutors">0</div>
+                        <div class="stat-label">Tutores Cadastrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-pets">0</div>
+                        <div class="stat-label">Pets Cadastrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-veterinarians">0</div>
+                        <div class="stat-label">Veterinários</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-users">0</div>
+                        <div class="stat-label">Usuários</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-vaccines">0</div>
+                        <div class="stat-label">Vacinas Aplicadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pending-vaccines">0</div>
+                        <div class="stat-label">Vacinas Pendentes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pets Page -->
+            <div id="pets" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>🐕</span>
+                            Gestão de Pets
+                        </h2>
+                        <button class="btn btn-primary" onclick="showPetModal()">
+                            <span>➕</span>
+                            Novo Pet
+                        </button>
+                    </div>
+
+                    <div class="search-container">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="search-pets" class="search-input" placeholder="Pesquisar pets..." oninput="filterPets()">
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Espécie</th>
+                                    <th>Raça</th>
+                                    <th>Idade</th>
+                                    <th>Sexo</th>
+                                    <th>Cor</th>
+                                    <th>Microchip</th>
+                                    <th>Tutor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pets-table-body">
+                                <!-- Dados carregados via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutores Page -->
+            <div id="tutors" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>👨‍👩‍👧‍👦</span>
+                            Gestão de Tutores
+                        </h2>
+                        <button class="btn btn-primary" onclick="showTutorModal()">
+                            <span>➕</span>
+                            Novo Tutor
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Contato</th>
+                                    <th>WhatsApp</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tutors-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Veterinários Page -->
+            <div id="veterinarians" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>👨‍⚕️</span>
+                            Gestão de Veterinários
+                        </h2>
+                        <button class="btn btn-primary" onclick="showVeterinarianModal()">
+                            <span>➕</span>
+                            Novo Veterinário
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CRMV</th>
+                                    <th>Especialidade</th>
+                                    <th>Contato</th>
+                                    <th>WhatsApp</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="veterinarians-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacinas Page -->
+            <div id="vaccines" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>🧪</span>
+                            Tipos de Vacina
+                        </h2>
+                        <button class="btn btn-primary" onclick="showVaccineModal()">
+                            <span>➕</span>
+                            Nova Vacina
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Periodicidade</th>
+                                    <th>Espécie</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vaccines-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controle de Vacinas Page -->
+            <div id="vaccine-control" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>💉</span>
+                            Controle de Vacinas
+                        </h2>
+                        <button class="btn btn-primary" onclick="showVaccineControlModal()">
+                            <span>➕</span>
+                            Nova Aplicação
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pet</th>
+                                    <th>Vacina</th>
+                                    <th>Data</th>
+                                    <th>Próxima Dose</th>
+                                    <th>Veterinário</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vaccine-control-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuários Page -->
+            <div id="users" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span>👥</span>
+                            Gestão de Usuários
+                        </h2>
+                        <button class="btn btn-primary" onclick="showUserModal()">
+                            <span>➕</span>
+                            Novo Usuário
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>WhatsApp</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container de Notificações -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Modal de Pet -->
+    <div class="modal" id="pet-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="pet-modal-title">Novo Pet</h2>
+                <button class="close-modal" onclick="closeModal('pet-modal')">&times;</button>
+            </div>
+            <form id="pet-form" onsubmit="savePet(event)">
+                <input type="hidden" id="pet-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="pet-name">Nome do Pet *</label>
+                        <input type="text" id="pet-name" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-species">Espécie *</label>
+                            <select id="pet-species" required>
+                                <option value="cachorro">Cachorro</option>
+                                <option value="gato">Gato</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-breed">Raça</label>
+                            <input type="text" id="pet-breed" placeholder="Ex: Labrador, Siames">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-birthdate">Data de Nascimento</label>
+                            <input type="date" id="pet-birthdate" onchange="calculateAge()">
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-age">Idade</label>
+                            <input type="text" id="pet-age" readonly placeholder="Calculado automaticamente">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pet-sex">Sexo</label>
+                            <select id="pet-sex">
+                                <option value="">Selecione</option>
+                                <option value="macho">Macho</option>
+                                <option value="femea">Fêmea</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pet-color">Cor</label>
+                            <input type="text" id="pet-color" placeholder="Ex: Preto, Branco, Caramelo">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pet-microchip">Número do Microchip</label>
+                        <input type="text" id="pet-microchip" placeholder="Ex: 123456789012345">
+                        <small style="color: #666; margin-top: 5px; display: block;">
+                            ⓘ Código único de 15 dígitos para identificação do animal
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pet-tutor">Tutor *</label>
+                        <select id="pet-tutor" required>
+                            <option value="">Selecione um tutor</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('pet-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Tutor -->
+    <div class="modal" id="tutor-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tutor-modal-title">Novo Tutor</h2>
+                <button class="close-modal" onclick="closeModal('tutor-modal')">&times;</button>
+            </div>
+            <form id="tutor-form" onsubmit="saveTutor(event)">
+                <input type="hidden" id="tutor-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="tutor-name">Nome Completo *</label>
+                        <input type="text" id="tutor-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tutor-email">Email</label>
+                        <input type="email" id="tutor-email">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tutor-phone">Telefone *</label>
+                            <input type="text" id="tutor-phone" required placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label for="tutor-whatsapp">WhatsApp</label>
+                            <input type="text" id="tutor-whatsapp" placeholder="(11) 99999-9999">
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('tutor-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Veterinário -->
+    <div class="modal" id="veterinarian-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="veterinarian-modal-title">Novo Veterinário</h2>
+                <button class="close-modal" onclick="closeModal('veterinarian-modal')">&times;</button>
+            </div>
+            <form id="veterinarian-form" onsubmit="saveVeterinarian(event)">
+                <input type="hidden" id="veterinarian-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="veterinarian-name">Nome Completo *</label>
+                        <input type="text" id="veterinarian-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="veterinarian-crmv">CRMV *</label>
+                        <input type="text" id="veterinarian-crmv" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="veterinarian-specialty">Especialidade</label>
+                        <input type="text" id="veterinarian-specialty">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="veterinarian-phone">Telefone</label>
+                            <input type="text" id="veterinarian-phone" placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label for="veterinarian-whatsapp">WhatsApp</label>
+                            <input type="text" id="veterinarian-whatsapp" placeholder="(11) 99999-9999">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="veterinarian-email">Email</label>
+                        <input type="email" id="veterinarian-email">
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('veterinarian-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Vacina -->
+    <div class="modal" id="vaccine-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="vaccine-modal-title">Nova Vacina</h2>
+                <button class="close-modal" onclick="closeModal('vaccine-modal')">&times;</button>
+            </div>
+            <form id="vaccine-form" onsubmit="saveVaccine(event)">
+                <input type="hidden" id="vaccine-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="vaccine-name">Nome da Vacina *</label>
+                        <input type="text" id="vaccine-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccine-periodicity">Periodicidade *</label>
+                        <select id="vaccine-periodicity" required>
+                            <option value="">Selecione</option>
+                            <option value="Anual">Anual</option>
+                            <option value="Semestral">Semestral</option>
+                            <option value="Trimestral">Trimestral</option>
+                            <option value="Mensal">Mensal</option>
+                            <option value="Dose única">Dose única</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccine-species">Espécie *</label>
+                        <select id="vaccine-species" required>
+                            <option value="">Selecione</option>
+                            <option value="cachorro">Cachorro</option>
+                            <option value="gato">Gato</option>
+                            <option value="ambos">Ambos</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('vaccine-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Controle de Vacina -->
+    <div class="modal" id="vaccine-control-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="vaccine-control-modal-title">Nova Aplicação</h2>
+                <button class="close-modal" onclick="closeModal('vaccine-control-modal')">&times;</button>
+            </div>
+            <form id="vaccine-control-form" onsubmit="saveVaccineControl(event)">
+                <input type="hidden" id="vaccine-control-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="vaccine-control-pet">Pet *</label>
+                        <select id="vaccine-control-pet" required>
+                            <option value="">Selecione um pet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccine-control-vaccine">Vacina *</label>
+                        <select id="vaccine-control-vaccine" required>
+                            <option value="">Selecione uma vacina</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vaccine-control-date">Data da Aplicação *</label>
+                            <input type="date" id="vaccine-control-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="vaccine-control-next-date">Próxima Dose</label>
+                            <input type="date" id="vaccine-control-next-date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="vaccine-control-veterinarian">Veterinário</label>
+                        <select id="vaccine-control-veterinarian">
+                            <option value="">Selecione um veterinário</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('vaccine-control-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Usuário -->
+    <div class="modal" id="user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="user-modal-title">Novo Usuário</h2>
+                <button class="close-modal" onclick="closeModal('user-modal')">&times;</button>
+            </div>
+            <form id="user-form" onsubmit="saveUser(event)">
+                <input type="hidden" id="user-id">
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label for="user-name">Nome Completo *</label>
+                        <input type="text" id="user-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email *</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-whatsapp">WhatsApp</label>
+                        <input type="text" id="user-whatsapp" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-password">Senha *</label>
+                        <input type="password" id="user-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-type">Tipo de Usuário *</label>
+                        <select id="user-type" required onchange="togglePermissionsSection()">
+                            <option value="">Selecione</option>
+                            <option value="admin">Administrador</option>
+                            <option value="user">Usuário</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-status">Status</label>
+                        <select id="user-status">
+                            <option value="active">Ativo</option>
+                            <option value="inactive">Inativo</option>
+                        </select>
+                    </div>
+                    <div id="permissions-section" class="permissions-section" style="display: none;">
+                        <h3>Permissões de Acesso</h3>
+                        <div class="permissions-grid" id="permissions-grid">
+                            <!-- Permissões serão carregadas dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 0 20px 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('user-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de Armazenamento
+        let users = JSON.parse(localStorage.getItem('cuxinho_users')) || [];
+        let tutors = JSON.parse(localStorage.getItem('cuxinho_tutors')) || [];
+        let pets = JSON.parse(localStorage.getItem('cuxinho_pets')) || [];
+        let veterinarians = JSON.parse(localStorage.getItem('cuxinho_veterinarians')) || [];
+        let vaccines = JSON.parse(localStorage.getItem('cuxinho_vaccines')) || [];
+        let vaccineControls = JSON.parse(localStorage.getItem('cuxinho_vaccine_controls')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('cuxinho_currentUser')) || null;
+
+        // Definição dos menus disponíveis
+        const availableMenus = [
+            { id: 'dashboard', name: 'Dashboard', icon: '📊' },
+            { id: 'tutors', name: 'Tutores', icon: '👨‍👩‍👧‍👦' },
+            { id: 'pets', name: 'Pets', icon: '🐕' },
+            { id: 'veterinarians', name: 'Veterinários', icon: '👨‍⚕️' },
+            { id: 'vaccines', name: 'Vacinas', icon: '🧪' },
+            { id: 'vaccine-control', name: 'Ctrl Vacinas', icon: '💉' },
+            { id: 'users', name: 'Usuários', icon: '👥' }
+        ];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSampleData();
+            
+            if (currentUser) {
+                showAuthenticatedLayout();
+                updateDashboard();
+                loadMenuBasedOnPermissions();
+            } else {
+                showLoginLayout();
+            }
+            
+            // Configurar event listeners
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-form').addEventListener('submit', handleRegister);
+        });
+
+        // ========== NOVAS FUNÇÕES PARA CÁLCULO DE IDADE ==========
+        function calculateAge() {
+            const birthdate = document.getElementById('pet-birthdate').value;
+            const ageField = document.getElementById('pet-age');
+            
+            if (birthdate) {
+                const age = calculateAgeFromBirthdate(birthdate);
+                ageField.value = age;
+            } else {
+                ageField.value = '';
+            }
+        }
+
+        function calculateAgeFromBirthdate(birthdate) {
+            const today = new Date();
+            const birthDate = new Date(birthdate);
+            
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            if (years === 0) {
+                return `${months} ${months === 1 ? 'mês' : 'meses'}`;
+            } else if (months === 0) {
+                return `${years} ${years === 1 ? 'ano' : 'anos'}`;
+            } else {
+                return `${years} ${years === 1 ? 'ano' : 'anos'} e ${months} ${months === 1 ? 'mês' : 'meses'}`;
+            }
+        }
+
+        function getAgeDisplay(ageString) {
+            if (!ageString) return '-';
+            
+            const parts = ageString.split(' ');
+            if (parts.length === 2) {
+                return `<div class="age-badge">${ageString}</div>`;
+            } else {
+                return `<div class="age-badge">${ageString}</div>`;
+            }
+        }
+
+        function getSexDisplay(sex) {
+            if (!sex) return '-';
+            
+            const sexClasses = {
+                'macho': 'sex-badge sex-male',
+                'femea': 'sex-badge sex-female'
+            };
+            
+            const sexText = {
+                'macho': 'Macho',
+                'femea': 'Fêmea'
+            };
+            
+            const className = sexClasses[sex] || 'sex-badge sex-unknown';
+            const text = sexText[sex] || sex;
+            
+            return `<span class="${className}">${text}</span>`;
+        }
+
+        // ========== FUNÇÃO PARA FORMATAR WHATSAPP ==========
+        function getWhatsAppDisplay(whatsapp) {
+            if (!whatsapp) return '-';
+            return `
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <span>${whatsapp}</span>
+                    <span class="whatsapp-badge" title="Abrir no WhatsApp" onclick="openWhatsApp('${whatsapp}')" style="cursor: pointer;">
+                        <span>📱</span>
+                        WhatsApp
+                    </span>
+                </div>
+            `;
+        }
+
+        function openWhatsApp(phone) {
+            // Remove caracteres não numéricos
+            const cleanPhone = phone.replace(/\D/g, '');
+            // Abre o WhatsApp com o número
+            window.open(`https://wa.me/55${cleanPhone}`, '_blank');
+        }
+
+        // ========== SISTEMA DE PERMISSÕES ==========
+        function togglePermissionsSection() {
+            const userType = document.getElementById('user-type').value;
+            const permissionsSection = document.getElementById('permissions-section');
+            
+            if (userType === 'user') {
+                permissionsSection.style.display = 'block';
+                loadAvailablePermissions();
+            } else {
+                permissionsSection.style.display = 'none';
+            }
+        }
+
+        function loadAvailablePermissions() {
+            const permissionsGrid = document.getElementById('permissions-grid');
+            permissionsGrid.innerHTML = '';
+            
+            availableMenus.forEach(menu => {
+                if (menu.id !== 'users') {
+                    const permissionItem = document.createElement('div');
+                    permissionItem.className = 'permission-item';
+                    permissionItem.innerHTML = `
+                        <input type="checkbox" id="perm-${menu.id}" name="permissions" value="${menu.id}" checked>
+                        <label for="perm-${menu.id}">${menu.icon} ${menu.name}</label>
+                    `;
+                    permissionsGrid.appendChild(permissionItem);
+                }
+            });
+        }
+
+        function loadMenuBasedOnPermissions() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.innerHTML = '';
+            
+            if (!currentUser) return;
+            
+            if (currentUser.type === 'admin') {
+                availableMenus.forEach(menu => {
+                    const navItem = document.createElement('li');
+                    navItem.className = 'nav-item';
+                    navItem.innerHTML = `
+                        <button class="nav-link ${menu.id === 'dashboard' ? 'active' : ''}" onclick="showPage('${menu.id}')">
+                            <span>${menu.icon}</span>
+                            ${menu.name}
+                        </button>
+                    `;
+                    navMenu.appendChild(navItem);
+                });
+            } else {
+                const userPermissions = currentUser.permissions || ['dashboard', 'tutors', 'pets', 'vaccine-control'];
+                
+                availableMenus.forEach(menu => {
+                    if (userPermissions.includes(menu.id)) {
+                        const navItem = document.createElement('li');
+                        navItem.className = 'nav-item';
+                        navItem.innerHTML = `
+                            <button class="nav-link ${menu.id === 'dashboard' ? 'active' : ''}" onclick="showPage('${menu.id}')">
+                                <span>${menu.icon}</span>
+                                ${menu.name}
+                            </button>
+                        `;
+                        navMenu.appendChild(navItem);
+                    }
+                });
+            }
+        }
+
+        function getUserPermissionsFromForm() {
+            const checkboxes = document.querySelectorAll('input[name="permissions"]:checked');
+            const permissions = [];
+            checkboxes.forEach(checkbox => {
+                permissions.push(checkbox.value);
+            });
+            if (!permissions.includes('dashboard')) {
+                permissions.push('dashboard');
+            }
+            return permissions;
+        }
+
+        function setUserPermissionsInForm(permissions) {
+            const checkboxes = document.querySelectorAll('input[name="permissions"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = permissions.includes(checkbox.value);
+            });
+        }
+
+        // ========== AUTENTICAÇÃO ==========
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                if (user.status === 'inactive') {
+                    showAlert('login-alert', 'Usuário inativo. Entre em contato com o administrador.', 'danger');
+                    return;
+                }
+                
+                currentUser = user;
+                localStorage.setItem('cuxinho_currentUser', JSON.stringify(currentUser));
+                showAuthenticatedLayout();
+                updateDashboard();
+                loadMenuBasedOnPermissions();
+                showNotification('Login realizado com sucesso!', 'success');
+            } else {
+                showAlert('login-alert', 'E-mail ou senha incorretos.', 'danger');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showAlert('register-alert', 'As senhas não coincidem.', 'danger');
+                return;
+            }
+
+            if (users.find(u => u.email === email)) {
+                showAlert('register-alert', 'Este e-mail já está registrado.', 'danger');
+                return;
+            }
+
+            const newUser = {
+                id: generateId(),
+                name,
+                email,
+                password,
+                type: 'user',
+                status: 'active',
+                permissions: ['dashboard', 'tutors', 'pets', 'vaccine-control'],
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('cuxinho_users', JSON.stringify(users));
+
+            showAlert('register-alert', 'Cadastro realizado! Faça login para continuar.', 'success');
+            document.getElementById('register-form').reset();
+            setTimeout(() => showAuthPage('login'), 1500);
+        }
+
+        // ========== NAVEGAÇÃO ==========
+        function showPage(pageId) {
+            if (currentUser.type === 'user' && !currentUser.permissions?.includes(pageId)) {
+                showNotification('Você não tem permissão para acessar esta página!', 'error');
+                return;
+            }
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            const activeLink = document.querySelector(`.nav-link[onclick="showPage('${pageId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            switch(pageId) {
+                case 'dashboard': updateDashboard(); break;
+                case 'tutors': loadTutors(); break;
+                case 'pets': loadPets(); break;
+                case 'veterinarians': loadVeterinarians(); break;
+                case 'vaccines': loadVaccines(); break;
+                case 'vaccine-control': loadVaccineControls(); break;
+                case 'users': loadUsers(); break;
+            }
+        }
+
+        function showAuthenticatedLayout() {
+            document.getElementById('login-layout').style.display = 'none';
+            document.getElementById('authenticated-layout').style.display = 'block';
+            document.getElementById('header-user-name').textContent = currentUser.name;
+            document.getElementById('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        }
+
+        function showLoginLayout() {
+            document.getElementById('login-layout').style.display = 'flex';
+            document.getElementById('authenticated-layout').style.display = 'none';
+        }
+
+        function showAuthPage(page) {
+            document.querySelectorAll('#login-layout .page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${page}-page`).classList.add('active');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('cuxinho_currentUser');
+            showLoginLayout();
+        }
+
+        // ========== MODAIS ==========
+        function showPetModal(petId = null) {
+            const modal = document.getElementById('pet-modal');
+            const form = document.getElementById('pet-form');
+            const title = document.getElementById('pet-modal-title');
+            const tutorSelect = document.getElementById('pet-tutor');
+            
+            tutorSelect.innerHTML = '<option value="">Selecione um tutor</option>';
+            tutors.forEach(tutor => {
+                tutorSelect.innerHTML += `<option value="${tutor.id}">${tutor.name}</option>`;
+            });
+            
+            form.reset();
+            document.getElementById('pet-id').value = '';
+            document.getElementById('pet-age').value = '';
+            
+            if (petId) {
+                const pet = pets.find(p => p.id === petId);
+                if (pet) {
+                    title.textContent = 'Editar Pet';
+                    document.getElementById('pet-id').value = pet.id;
+                    document.getElementById('pet-name').value = pet.name;
+                    document.getElementById('pet-species').value = pet.species;
+                    document.getElementById('pet-breed').value = pet.breed || '';
+                    document.getElementById('pet-birthdate').value = pet.birthdate || '';
+                    document.getElementById('pet-sex').value = pet.sex || '';
+                    document.getElementById('pet-color').value = pet.color || '';
+                    document.getElementById('pet-microchip').value = pet.microchip || '';
+                    document.getElementById('pet-tutor').value = pet.tutorId;
+                    
+                    // Calcular idade se tiver data de nascimento
+                    if (pet.birthdate) {
+                        const age = calculateAgeFromBirthdate(pet.birthdate);
+                        document.getElementById('pet-age').value = age;
+                    }
+                }
+            } else {
+                title.textContent = 'Novo Pet';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function showTutorModal(tutorId = null) {
+            const modal = document.getElementById('tutor-modal');
+            const form = document.getElementById('tutor-form');
+            const title = document.getElementById('tutor-modal-title');
+            
+            form.reset();
+            document.getElementById('tutor-id').value = '';
+            
+            if (tutorId) {
+                const tutor = tutors.find(t => t.id === tutorId);
+                if (tutor) {
+                    title.textContent = 'Editar Tutor';
+                    document.getElementById('tutor-id').value = tutor.id;
+                    document.getElementById('tutor-name').value = tutor.name;
+                    document.getElementById('tutor-email').value = tutor.email || '';
+                    document.getElementById('tutor-phone').value = tutor.phone;
+                    document.getElementById('tutor-whatsapp').value = tutor.whatsapp || '';
+                }
+            } else {
+                title.textContent = 'Novo Tutor';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function showVeterinarianModal(veterinarianId = null) {
+            const modal = document.getElementById('veterinarian-modal');
+            const form = document.getElementById('veterinarian-form');
+            const title = document.getElementById('veterinarian-modal-title');
+            
+            form.reset();
+            document.getElementById('veterinarian-id').value = '';
+            
+            if (veterinarianId) {
+                const veterinarian = veterinarians.find(v => v.id === veterinarianId);
+                if (veterinarian) {
+                    title.textContent = 'Editar Veterinário';
+                    document.getElementById('veterinarian-id').value = veterinarian.id;
+                    document.getElementById('veterinarian-name').value = veterinarian.name;
+                    document.getElementById('veterinarian-crmv').value = veterinarian.crmv;
+                    document.getElementById('veterinarian-specialty').value = veterinarian.specialty || '';
+                    document.getElementById('veterinarian-phone').value = veterinarian.phone || '';
+                    document.getElementById('veterinarian-whatsapp').value = veterinarian.whatsapp || '';
+                    document.getElementById('veterinarian-email').value = veterinarian.email || '';
+                }
+            } else {
+                title.textContent = 'Novo Veterinário';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function showVaccineModal(vaccineId = null) {
+            const modal = document.getElementById('vaccine-modal');
+            const form = document.getElementById('vaccine-form');
+            const title = document.getElementById('vaccine-modal-title');
+            
+            form.reset();
+            document.getElementById('vaccine-id').value = '';
+            
+            if (vaccineId) {
+                const vaccine = vaccines.find(v => v.id === vaccineId);
+                if (vaccine) {
+                    title.textContent = 'Editar Vacina';
+                    document.getElementById('vaccine-id').value = vaccine.id;
+                    document.getElementById('vaccine-name').value = vaccine.name;
+                    document.getElementById('vaccine-periodicity').value = vaccine.periodicity;
+                    document.getElementById('vaccine-species').value = vaccine.species;
+                }
+            } else {
+                title.textContent = 'Nova Vacina';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function showVaccineControlModal(vaccineControlId = null) {
+            const modal = document.getElementById('vaccine-control-modal');
+            const form = document.getElementById('vaccine-control-form');
+            const title = document.getElementById('vaccine-control-modal-title');
+            const petSelect = document.getElementById('vaccine-control-pet');
+            const vaccineSelect = document.getElementById('vaccine-control-vaccine');
+            const veterinarianSelect = document.getElementById('vaccine-control-veterinarian');
+            
+            // Preencher selects
+            petSelect.innerHTML = '<option value="">Selecione um pet</option>';
+            pets.forEach(pet => {
+                petSelect.innerHTML += `<option value="${pet.id}">${pet.name}</option>`;
+            });
+            
+            vaccineSelect.innerHTML = '<option value="">Selecione uma vacina</option>';
+            vaccines.forEach(vaccine => {
+                vaccineSelect.innerHTML += `<option value="${vaccine.id}">${vaccine.name}</option>`;
+            });
+            
+            veterinarianSelect.innerHTML = '<option value="">Selecione um veterinário</option>';
+            veterinarians.forEach(veterinarian => {
+                veterinarianSelect.innerHTML += `<option value="${veterinarian.id}">${veterinarian.name}</option>`;
+            });
+            
+            form.reset();
+            document.getElementById('vaccine-control-id').value = '';
+            
+            if (vaccineControlId) {
+                const vaccineControl = vaccineControls.find(vc => vc.id === vaccineControlId);
+                if (vaccineControl) {
+                    title.textContent = 'Editar Aplicação';
+                    document.getElementById('vaccine-control-id').value = vaccineControl.id;
+                    document.getElementById('vaccine-control-pet').value = vaccineControl.petId;
+                    document.getElementById('vaccine-control-vaccine').value = vaccineControl.vaccineId;
+                    document.getElementById('vaccine-control-date').value = vaccineControl.date;
+                    document.getElementById('vaccine-control-next-date').value = vaccineControl.nextDate || '';
+                    document.getElementById('vaccine-control-veterinarian').value = vaccineControl.veterinarianId || '';
+                }
+            } else {
+                title.textContent = 'Nova Aplicação';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function showUserModal(userId = null) {
+            const modal = document.getElementById('user-modal');
+            const form = document.getElementById('user-form');
+            const title = document.getElementById('user-modal-title');
+            
+            form.reset();
+            document.getElementById('user-id').value = '';
+            document.getElementById('permissions-section').style.display = 'none';
+            
+            if (userId) {
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    title.textContent = 'Editar Usuário';
+                    document.getElementById('user-id').value = user.id;
+                    document.getElementById('user-name').value = user.name;
+                    document.getElementById('user-email').value = user.email;
+                    document.getElementById('user-whatsapp').value = user.whatsapp || '';
+                    document.getElementById('user-password').value = ''; // Não preencher senha por segurança
+                    document.getElementById('user-type').value = user.type;
+                    document.getElementById('user-status').value = user.status;
+                    
+                    if (user.type === 'user') {
+                        document.getElementById('permissions-section').style.display = 'block';
+                        loadAvailablePermissions();
+                        setUserPermissionsInForm(user.permissions || []);
+                    }
+                }
+            } else {
+                title.textContent = 'Novo Usuário';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        // ========== CRUD OPERATIONS ==========
+        function savePet(e) {
+            e.preventDefault();
+            const petId = document.getElementById('pet-id').value;
+            const petData = {
+                name: document.getElementById('pet-name').value,
+                species: document.getElementById('pet-species').value,
+                breed: document.getElementById('pet-breed').value,
+                birthdate: document.getElementById('pet-birthdate').value,
+                sex: document.getElementById('pet-sex').value,
+                color: document.getElementById('pet-color').value,
+                microchip: document.getElementById('pet-microchip').value,
+                tutorId: document.getElementById('pet-tutor').value
+            };
+
+            if (petId) {
+                const index = pets.findIndex(p => p.id === petId);
+                if (index !== -1) {
+                    pets[index] = { ...pets[index], ...petData };
+                    showNotification('Pet atualizado com sucesso!', 'success');
+                }
+            } else {
+                const newPet = {
+                    id: generateId(),
+                    ...petData,
+                    createdAt: new Date().toISOString()
+                };
+                pets.push(newPet);
+                showNotification('Pet cadastrado com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_pets', JSON.stringify(pets));
+            closeModal('pet-modal');
+            loadPets();
+            updateDashboard();
+        }
+
+        function saveTutor(e) {
+            e.preventDefault();
+            const tutorId = document.getElementById('tutor-id').value;
+            const tutorData = {
+                name: document.getElementById('tutor-name').value,
+                email: document.getElementById('tutor-email').value,
+                phone: document.getElementById('tutor-phone').value,
+                whatsapp: document.getElementById('tutor-whatsapp').value
+            };
+
+            if (tutorId) {
+                const index = tutors.findIndex(t => t.id === tutorId);
+                if (index !== -1) {
+                    tutors[index] = { ...tutors[index], ...tutorData };
+                    showNotification('Tutor atualizado com sucesso!', 'success');
+                }
+            } else {
+                const newTutor = {
+                    id: generateId(),
+                    ...tutorData,
+                    createdAt: new Date().toISOString()
+                };
+                tutors.push(newTutor);
+                showNotification('Tutor cadastrado com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_tutors', JSON.stringify(tutors));
+            closeModal('tutor-modal');
+            loadTutors();
+            updateDashboard();
+        }
+
+        function saveVeterinarian(e) {
+            e.preventDefault();
+            const veterinarianId = document.getElementById('veterinarian-id').value;
+            const veterinarianData = {
+                name: document.getElementById('veterinarian-name').value,
+                crmv: document.getElementById('veterinarian-crmv').value,
+                specialty: document.getElementById('veterinarian-specialty').value,
+                phone: document.getElementById('veterinarian-phone').value,
+                whatsapp: document.getElementById('veterinarian-whatsapp').value,
+                email: document.getElementById('veterinarian-email').value
+            };
+
+            if (veterinarianId) {
+                const index = veterinarians.findIndex(v => v.id === veterinarianId);
+                if (index !== -1) {
+                    veterinarians[index] = { ...veterinarians[index], ...veterinarianData };
+                    showNotification('Veterinário atualizado com sucesso!', 'success');
+                }
+            } else {
+                const newVeterinarian = {
+                    id: generateId(),
+                    ...veterinarianData,
+                    createdAt: new Date().toISOString()
+                };
+                veterinarians.push(newVeterinarian);
+                showNotification('Veterinário cadastrado com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_veterinarians', JSON.stringify(veterinarians));
+            closeModal('veterinarian-modal');
+            loadVeterinarians();
+            updateDashboard();
+        }
+
+        function saveVaccine(e) {
+            e.preventDefault();
+            const vaccineId = document.getElementById('vaccine-id').value;
+            const vaccineData = {
+                name: document.getElementById('vaccine-name').value,
+                periodicity: document.getElementById('vaccine-periodicity').value,
+                species: document.getElementById('vaccine-species').value
+            };
+
+            if (vaccineId) {
+                const index = vaccines.findIndex(v => v.id === vaccineId);
+                if (index !== -1) {
+                    vaccines[index] = { ...vaccines[index], ...vaccineData };
+                    showNotification('Vacina atualizada com sucesso!', 'success');
+                }
+            } else {
+                const newVaccine = {
+                    id: generateId(),
+                    ...vaccineData,
+                    createdAt: new Date().toISOString()
+                };
+                vaccines.push(newVaccine);
+                showNotification('Vacina cadastrada com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_vaccines', JSON.stringify(vaccines));
+            closeModal('vaccine-modal');
+            loadVaccines();
+            updateDashboard();
+        }
+
+        function saveVaccineControl(e) {
+            e.preventDefault();
+            const vaccineControlId = document.getElementById('vaccine-control-id').value;
+            const vaccineControlData = {
+                petId: document.getElementById('vaccine-control-pet').value,
+                vaccineId: document.getElementById('vaccine-control-vaccine').value,
+                date: document.getElementById('vaccine-control-date').value,
+                nextDate: document.getElementById('vaccine-control-next-date').value,
+                veterinarianId: document.getElementById('vaccine-control-veterinarian').value
+            };
+
+            if (vaccineControlId) {
+                const index = vaccineControls.findIndex(vc => vc.id === vaccineControlId);
+                if (index !== -1) {
+                    vaccineControls[index] = { ...vaccineControls[index], ...vaccineControlData };
+                    showNotification('Aplicação atualizada com sucesso!', 'success');
+                }
+            } else {
+                const newVaccineControl = {
+                    id: generateId(),
+                    ...vaccineControlData,
+                    createdAt: new Date().toISOString()
+                };
+                vaccineControls.push(newVaccineControl);
+                showNotification('Aplicação cadastrada com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_vaccine_controls', JSON.stringify(vaccineControls));
+            closeModal('vaccine-control-modal');
+            loadVaccineControls();
+            updateDashboard();
+        }
+
+        function saveUser(e) {
+            e.preventDefault();
+            const userId = document.getElementById('user-id').value;
+            const userData = {
+                name: document.getElementById('user-name').value,
+                email: document.getElementById('user-email').value,
+                whatsapp: document.getElementById('user-whatsapp').value,
+                password: document.getElementById('user-password').value,
+                type: document.getElementById('user-type').value,
+                status: document.getElementById('user-status').value
+            };
+
+            // Se for usuário comum, adicionar permissões
+            if (userData.type === 'user') {
+                userData.permissions = getUserPermissionsFromForm();
+            } else {
+                userData.permissions = null;
+            }
+
+            if (userId) {
+                const index = users.findIndex(u => u.id === userId);
+                if (index !== -1) {
+                    // Manter a senha atual se não foi alterada
+                    if (!userData.password) {
+                        userData.password = users[index].password;
+                    }
+                    users[index] = { ...users[index], ...userData };
+                    showNotification('Usuário atualizado com sucesso!', 'success');
+                }
+            } else {
+                const newUser = {
+                    id: generateId(),
+                    ...userData,
+                    createdAt: new Date().toISOString()
+                };
+                users.push(newUser);
+                showNotification('Usuário cadastrado com sucesso!', 'success');
+            }
+
+            localStorage.setItem('cuxinho_users', JSON.stringify(users));
+            closeModal('user-modal');
+            loadUsers();
+            updateDashboard();
+        }
+
+        // ========== LOAD DATA ==========
+        function loadPets() {
+            const tbody = document.getElementById('pets-table-body');
+            if (pets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">🐕</div>
+                            <p>Nenhum pet cadastrado</p>
+                            <button class="btn btn-primary" onclick="showPetModal()">
+                                <span>➕</span>
+                                Cadastrar Primeiro Pet
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pets.map(pet => {
+                const tutor = tutors.find(t => t.id === pet.tutorId);
+                const ageDisplay = pet.birthdate ? calculateAgeFromBirthdate(pet.birthdate) : '';
+                
+                return `
+                    <tr>
+                        <td>${pet.name}</td>
+                        <td>${pet.species}</td>
+                        <td>${pet.breed || '-'}</td>
+                        <td>${getAgeDisplay(ageDisplay)}</td>
+                        <td>${getSexDisplay(pet.sex)}</td>
+                        <td>${pet.color || '-'}</td>
+                        <td>
+                            ${pet.microchip ? `
+                                <div class="microchip-info">
+                                    <span>🔍</span>
+                                    ${pet.microchip}
+                                </div>
+                            ` : '-'}
+                        </td>
+                        <td>${tutor ? tutor.name : 'N/A'}</td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn btn-outline btn-sm" onclick="showPetModal('${pet.id}')">
+                                    <span>✏️</span>
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deletePet('${pet.id}')">
+                                    <span>🗑️</span>
+                                    Excluir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadTutors() {
+            const tbody = document.getElementById('tutors-table-body');
+            if (tutors.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div class="empty-state-icon">👨‍👩‍👧‍👦</div>
+                            <p>Nenhum tutor cadastrado</p>
+                            <button class="btn btn-primary" onclick="showTutorModal()">
+                                <span>➕</span>
+                                Cadastrar Primeiro Tutor
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = tutors.map(tutor => `
+                <tr>
+                    <td>${tutor.name}</td>
+                    <td>${tutor.phone}<br><small>${tutor.email || ''}</small></td>
+                    <td>${getWhatsAppDisplay(tutor.whatsapp)}</td>
+                    <td><span class="status-badge status-active">Ativo</span></td>
+                    <td>
+                        <div class="user-actions">
+                            <button class="btn btn-outline btn-sm" onclick="showTutorModal('${tutor.id}')">
+                                <span>✏️</span>
+                                Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTutor('${tutor.id}')">
+                                <span>🗑️</span>
+                                Excluir
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadVeterinarians() {
+            const tbody = document.getElementById('veterinarians-table-body');
+            if (veterinarians.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">👨‍⚕️</div>
+                            <p>Nenhum veterinário cadastrado</p>
+                            <button class="btn btn-primary" onclick="showVeterinarianModal()">
+                                <span>➕</span>
+                                Cadastrar Primeiro Veterinário
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = veterinarians.map(veterinarian => `
+                <tr>
+                    <td>${veterinarian.name}</td>
+                    <td>${veterinarian.crmv}</td>
+                    <td>${veterinarian.specialty || '-'}</td>
+                    <td>${veterinarian.phone || '-'}<br><small>${veterinarian.email || ''}</small></td>
+                    <td>${getWhatsAppDisplay(veterinarian.whatsapp)}</td>
+                    <td>
+                        <div class="user-actions">
+                            <button class="btn btn-outline btn-sm" onclick="showVeterinarianModal('${veterinarian.id}')">
+                                <span>✏️</span>
+                                Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteVeterinarian('${veterinarian.id}')">
+                                <span>🗑️</span>
+                                Excluir
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadVaccines() {
+            const tbody = document.getElementById('vaccines-table-body');
+            if (vaccines.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            <div class="empty-state-icon">🧪</div>
+                            <p>Nenhuma vacina cadastrada</p>
+                            <button class="btn btn-primary" onclick="showVaccineModal()">
+                                <span>➕</span>
+                                Cadastrar Primeira Vacina
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = vaccines.map(vaccine => `
+                <tr>
+                    <td>${vaccine.name}</td>
+                    <td>${vaccine.periodicity}</td>
+                    <td>${vaccine.species}</td>
+                    <td>
+                        <div class="user-actions">
+                            <button class="btn btn-outline btn-sm" onclick="showVaccineModal('${vaccine.id}')">
+                                <span>✏️</span>
+                                Editar
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteVaccine('${vaccine.id}')">
+                                <span>🗑️</span>
+                                Excluir
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadVaccineControls() {
+            const tbody = document.getElementById('vaccine-control-table-body');
+            if (vaccineControls.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">💉</div>
+                            <p>Nenhuma aplicação de vacina registrada</p>
+                            <button class="btn btn-primary" onclick="showVaccineControlModal()">
+                                <span>➕</span>
+                                Registrar Primeira Aplicação
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = vaccineControls.map(vc => {
+                const pet = pets.find(p => p.id === vc.petId);
+                const vaccine = vaccines.find(v => v.id === vc.vaccineId);
+                const veterinarian = veterinarians.find(v => v.id === vc.veterinarianId);
+                
+                // Verificar se está pendente
+                const today = new Date();
+                const nextDate = vc.nextDate ? new Date(vc.nextDate) : null;
+                const isPending = nextDate && nextDate < today;
+                const status = isPending ? 'Pendente' : 'Em dia';
+                const statusClass = isPending ? 'status-pending' : 'status-active';
+                
+                return `
+                    <tr>
+                        <td>${pet ? pet.name : 'N/A'}</td>
+                        <td>${vaccine ? vaccine.name : 'N/A'}</td>
+                        <td>${formatDate(vc.date)}</td>
+                        <td>${vc.nextDate ? formatDate(vc.nextDate) : '-'}</td>
+                        <td>${veterinarian ? veterinarian.name : '-'}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn btn-outline btn-sm" onclick="showVaccineControlModal('${vc.id}')">
+                                    <span>✏️</span>
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteVaccineControl('${vc.id}')">
+                                    <span>🗑️</span>
+                                    Excluir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadUsers() {
+            const tbody = document.getElementById('users-table-body');
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <p>Nenhum usuário cadastrado</p>
+                            <button class="btn btn-primary" onclick="showUserModal()">
+                                <span>➕</span>
+                                Cadastrar Primeiro Usuário
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const statusClass = user.status === 'active' ? 'status-active' : 'status-inactive';
+                const statusText = user.status === 'active' ? 'Ativo' : 'Inativo';
+                const typeText = user.type === 'admin' ? 'Administrador' : 'Usuário';
+                
+                return `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${getWhatsAppDisplay(user.whatsapp)}</td>
+                        <td>${typeText}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn btn-outline btn-sm" onclick="showUserModal('${user.id}')">
+                                    <span>✏️</span>
+                                    Editar
+                                </button>
+                                ${user.id !== currentUser.id ? `
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
+                                    <span>🗑️</span>
+                                    Excluir
+                                </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== DELETE FUNCTIONS ==========
+        function deletePet(petId) {
+            if (confirm('Tem certeza que deseja excluir este pet?')) {
+                pets = pets.filter(p => p.id !== petId);
+                localStorage.setItem('cuxinho_pets', JSON.stringify(pets));
+                loadPets();
+                updateDashboard();
+                showNotification('Pet excluído com sucesso!', 'success');
+            }
+        }
+
+        function deleteTutor(tutorId) {
+            // Verificar se o tutor tem pets associados
+            const hasPets = pets.some(p => p.tutorId === tutorId);
+            if (hasPets) {
+                showNotification('Não é possível excluir um tutor que possui pets cadastrados!', 'error');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja excluir este tutor?')) {
+                tutors = tutors.filter(t => t.id !== tutorId);
+                localStorage.setItem('cuxinho_tutors', JSON.stringify(tutors));
+                loadTutors();
+                updateDashboard();
+                showNotification('Tutor excluído com sucesso!', 'success');
+            }
+        }
+
+        function deleteVeterinarian(veterinarianId) {
+            if (confirm('Tem certeza que deseja excluir este veterinário?')) {
+                veterinarians = veterinarians.filter(v => v.id !== veterinarianId);
+                localStorage.setItem('cuxinho_veterinarians', JSON.stringify(veterinarians));
+                loadVeterinarians();
+                updateDashboard();
+                showNotification('Veterinário excluído com sucesso!', 'success');
+            }
+        }
+
+        function deleteVaccine(vaccineId) {
+            // Verificar se a vacina tem aplicações associadas
+            const hasApplications = vaccineControls.some(vc => vc.vaccineId === vaccineId);
+            if (hasApplications) {
+                showNotification('Não é possível excluir uma vacina que possui aplicações registradas!', 'error');
+                return;
+            }
+            
+            if (confirm('Tem certeza que deseja excluir esta vacina?')) {
+                vaccines = vaccines.filter(v => v.id !== vaccineId);
+                localStorage.setItem('cuxinho_vaccines', JSON.stringify(vaccines));
+                loadVaccines();
+                updateDashboard();
+                showNotification('Vacina excluída com sucesso!', 'success');
+            }
+        }
+
+        function deleteVaccineControl(vaccineControlId) {
+            if (confirm('Tem certeza que deseja excluir esta aplicação de vacina?')) {
+                vaccineControls = vaccineControls.filter(vc => vc.id !== vaccineControlId);
+                localStorage.setItem('cuxinho_vaccine_controls', JSON.stringify(vaccineControls));
+                loadVaccineControls();
+                updateDashboard();
+                showNotification('Aplicação excluída com sucesso!', 'success');
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                users = users.filter(u => u.id !== userId);
+                localStorage.setItem('cuxinho_users', JSON.stringify(users));
+                loadUsers();
+                updateDashboard();
+                showNotification('Usuário excluído com sucesso!', 'success');
+            }
+        }
+
+        // ========== UTILITIES ==========
+        function showAlert(elementId, message, type) {
+            const alertElement = document.getElementById(elementId);
+            alertElement.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertElement.innerHTML = '', 5000);
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div>${type === 'success' ? '✅' : '❌'}</div>
+                <div>${message}</div>
+                <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; font-size: 18px;">×</button>
+            `;
+            container.appendChild(notification);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function filterPets() {
+            const searchTerm = document.getElementById('search-pets').value.toLowerCase();
+            const filteredPets = pets.filter(pet => 
+                pet.name.toLowerCase().includes(searchTerm) ||
+                pet.species.toLowerCase().includes(searchTerm) ||
+                (pet.breed && pet.breed.toLowerCase().includes(searchTerm)) ||
+                (pet.color && pet.color.toLowerCase().includes(searchTerm))
+            );
+            
+            const tbody = document.getElementById('pets-table-body');
+            if (filteredPets.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <p>Nenhum pet encontrado</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredPets.map(pet => {
+                const tutor = tutors.find(t => t.id === pet.tutorId);
+                const ageDisplay = pet.birthdate ? calculateAgeFromBirthdate(pet.birthdate) : '';
+                
+                return `
+                    <tr>
+                        <td>${pet.name}</td>
+                        <td>${pet.species}</td>
+                        <td>${pet.breed || '-'}</td>
+                        <td>${getAgeDisplay(ageDisplay)}</td>
+                        <td>${getSexDisplay(pet.sex)}</td>
+                        <td>${pet.color || '-'}</td>
+                        <td>
+                            ${pet.microchip ? `
+                                <div class="microchip-info">
+                                    <span>🔍</span>
+                                    ${pet.microchip}
+                                </div>
+                            ` : '-'}
+                        </td>
+                        <td>${tutor ? tutor.name : 'N/A'}</td>
+                        <td>
+                            <div class="user-actions">
+                                <button class="btn btn-outline btn-sm" onclick="showPetModal('${pet.id}')">
+                                    <span>✏️</span>
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deletePet('${pet.id}')">
+                                    <span>🗑️</span>
+                                    Excluir
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ========== SAMPLE DATA ==========
+        function initializeSampleData() {
+            if (users.length === 0) {
+                users.push({
+                    id: 'admin',
+                    name: 'Administrador',
+                    email: 'admin@cuxinho.com',
+                    whatsapp: '(11) 99999-9999',
+                    password: 'admin123',
+                    type: 'admin',
+                    status: 'active',
+                    permissions: null,
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('cuxinho_users', JSON.stringify(users));
+            }
+
+            if (tutors.length === 0) {
+                tutors.push({
+                    id: 'tutor1',
+                    name: 'João Silva',
+                    email: 'joao.silva@email.com',
+                    phone: '(11) 99999-9999',
+                    whatsapp: '(11) 98888-8888',
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('cuxinho_tutors', JSON.stringify(tutors));
+            }
+
+            if (pets.length === 0) {
+                // Data de 2 anos atrás para exemplo
+                const twoYearsAgo = new Date();
+                twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+                
+                pets.push({
+                    id: 'pet1',
+                    name: 'Rex',
+                    species: 'cachorro',
+                    breed: 'Labrador',
+                    birthdate: twoYearsAgo.toISOString().split('T')[0],
+                    sex: 'macho',
+                    color: 'Caramelo',
+                    microchip: '123456789012345',
+                    tutorId: 'tutor1',
+                    createdAt: new Date().toISOString()
+                });
+
+                // Data de 6 meses atrás para exemplo
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+                
+                pets.push({
+                    id: 'pet2',
+                    name: 'Luna',
+                    species: 'gato',
+                    breed: 'Siames',
+                    birthdate: sixMonthsAgo.toISOString().split('T')[0],
+                    sex: 'femea',
+                    color: 'Branco e Preto',
+                    microchip: '',
+                    tutorId: 'tutor1',
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('cuxinho_pets', JSON.stringify(pets));
+            }
+
+            if (veterinarians.length === 0) {
+                veterinarians.push({
+                    id: 'vet1',
+                    name: 'Dra. Maria Santos',
+                    crmv: 'SP-12345',
+                    specialty: 'Clínica Geral',
+                    phone: '(11) 88888-8888',
+                    whatsapp: '(11) 87777-7777',
+                    email: 'maria.santos@vet.com',
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('cuxinho_veterinarians', JSON.stringify(veterinarians));
+            }
+
+            if (vaccines.length === 0) {
+                vaccines.push(
+                    {
+                        id: 'v1',
+                        name: 'V8',
+                        periodicity: 'Anual',
+                        species: 'cachorro',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'v2',
+                        name: 'V4',
+                        periodicity: 'Anual',
+                        species: 'gato',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'v3',
+                        name: 'Raiva',
+                        periodicity: 'Anual',
+                        species: 'ambos',
+                        createdAt: new Date().toISOString()
+                    }
+                );
+                localStorage.setItem('cuxinho_vaccines', JSON.stringify(vaccines));
+            }
+
+            if (vaccineControls.length === 0) {
+                const today = new Date();
+                const nextYear = new Date();
+                nextYear.setFullYear(today.getFullYear() + 1);
+                
+                vaccineControls.push({
+                    id: 'vc1',
+                    petId: 'pet1',
+                    vaccineId: 'v1',
+                    date: today.toISOString().split('T')[0],
+                    nextDate: nextYear.toISOString().split('T')[0],
+                    veterinarianId: 'vet1',
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('cuxinho_vaccine_controls', JSON.stringify(vaccineControls));
+            }
+        }
+
+        function updateDashboard() {
+            document.getElementById('total-tutors').textContent = tutors.length;
+            document.getElementById('total-pets').textContent = pets.length;
+            document.getElementById('total-veterinarians').textContent = veterinarians.length;
+            document.getElementById('total-users').textContent = users.length;
+            document.getElementById('total-vaccines').textContent = vaccineControls.length;
+            
+            const pending = vaccineControls.filter(vc => vc.nextDate && new Date(vc.nextDate) < new Date()).length;
+            document.getElementById('pending-vaccines').textContent = pending;
+        }
+    </script>
+</body>
+</html>
