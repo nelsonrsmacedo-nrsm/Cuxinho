@@ -229,7 +229,7 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 
 ## 👨‍💻 Autor
 
-Desenvolvido com ❤️ para facilitar o controle veterinário de pets.
+Desenvolvido em homenagem ao filha de minha Alma, para facilitar o controle veterinário de pets.
 
 ---
 
